@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+
+    <h1 class="fw-bold">
+        🏥 Sistema de Gestión Hospitalaria
+    </h1>
+
+    <p class="text-muted fs-5">
+        Bienvenido al panel de administración.
+    </p>
+
+</div>
+
+<div class="row">
+
+    <!-- Pacientes -->
+
+    <div class="col-md-6 mb-4">
+
+        <div class="card text-bg-success shadow h-100">
+
+            <div class="card-body">
+
+                <h5 class="card-title">
+
+                    <i class="bi bi-people-fill"></i>
+
+                    Pacientes Registrados
+
+                </h5>
+
+                <h1 class="display-4 fw-bold">
+
+                    {{ total_pacientes }}
+
+                </h1>
+
+                <small>
+                    Total de pacientes almacenados en el sistema.
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Citas -->
+
+    <div class="col-md-6 mb-4">
+
+        <div class="card shadow h-100 border-primary">
+
+            <div class="card-body">
+
+                <h5 class="card-title text-primary">
+
+                    <i class="bi bi-calendar-check-fill"></i>
+
+                    Citas Médicas
+
+                </h5>
+
+                <h1 class="display-4 fw-bold text-primary">
+
+                    —
+
+                </h1>
+
+                <small class="text-muted">
+
+                    Este módulo será agregado próximamente.
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card shadow">
+
+    <div class="card-header bg-success text-white">
+
+        <h5 class="mb-0">
+
+            <i class="bi bi-clock-history"></i>
+
+            Últimos pacientes registrados
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>Documento</th>
+
+                    <th>Nombre</th>
+
+                    <th>Correo</th>
+
+                    <th>Teléfono</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for paciente in ultimos_pacientes %}
+
+                <tr>
+
+                    <td>
+
+                        {{ paciente.get_tipo_documento_display }}
+
+                        {{ paciente.numero_documento }}
+
+                    </td>
+
+                    <td>
+
+                        {{ paciente.nombres }}
+
+                        {{ paciente.apellidos }}
+
+                    </td>
+
+                    <td>
+
+                        {{ paciente.correo }}
+
+                    </td>
+
+                    <td>
+
+                        {{ paciente.telefono }}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="4" class="text-center text-muted">
+
+                        No hay pacientes registrados.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

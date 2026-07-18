@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Paciente{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    {% if formulario.instance.pk %}
+        Editar Paciente
+    {% else %}
+        Nuevo Paciente
+    {% endif %}
+</h2>
+
+<form method="post" id="formulario-paciente">
+
+    {% csrf_token %}
+
+    {% if formulario.errors %}
+        <div class="alert alert-danger">
+            <strong>Revisa la información ingresada:</strong>
+            <ul class="mb-0">
+                {% for field in formulario %}
+                    {% for error in field.errors %}
+                        <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="row">
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Tipo de documento</label>
+            {{ formulario.tipo_documento }}
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Número de documento</label>
+            {{ formulario.numero_documento }}
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Nombres</label>
+            {{ formulario.nombres }}
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Apellidos</label>
+            {{ formulario.apellidos }}
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Fecha de nacimiento</label>
+            {{ formulario.fecha_nacimiento }}
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Teléfono</label>
+            {{ formulario.telefono }}
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Correo electrónico</label>
+            {{ formulario.correo }}
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Dirección</label>
+            {{ formulario.direccion }}
+        </div>
+
+    </div>
+
+    <div class="mt-3">
+
+        {% if advertencia_correo %}
+        <div class="alert alert-warning mt-3" id="alerta-correo">
+            <strong>Advertencia:</strong> El correo ingresado ya está registrado para el paciente
+            <strong>{{ advertencia_correo.nombres }} {{ advertencia_correo.apellidos }}</strong>
+            ({{ advertencia_correo.get_tipo_documento_display }} {{ advertencia_correo.numero_documento }}).
+            <br><br>
+            Si este correo es temporal (familiar, tutor, etc.), puede continuar de todos modos.
+            El paciente deberá actualizarlo cuando disponga de uno propio.
+            <br><br>
+            <input type="hidden" name="confirmar_correo_duplicado" value="1">
+            <button type="submit" class="btn btn-warning me-2">Continuar de todos modos</button>
+            <button type="button" class="btn btn-secondary" onclick="cerrarAdvertencia()">Cancelar</button>
+        </div>
+        {% else %}
+        <button type="submit" class="btn btn-success">
+            Guardar
+        </button>
+        <a href="{% url 'lista_pacientes' %}" class="btn btn-secondary">
+            Cancelar
+        </a>
+        {% endif %}
+
+    </div>
+
+</form>
+
+<script>
+    function cerrarAdvertencia() {
+        document.getElementById('alerta-correo').style.display = 'none';
+        document.querySelector('input[name="confirmar_correo_duplicado"]').remove();
+    }
+</script>
+
+{% endblock %}
