@@ -168,3 +168,29 @@ def eliminar_paciente(request, paciente_id):
     return render(request, 'pacientes/confirmar_eliminar.html', {
         'paciente': paciente,
     })
+
+
+def registro_usuario(request):
+    """
+    Permite crear una cuenta de usuario administrador desde el navegador.
+
+    GET:  Muestra el formulario de registro.
+    POST: Crea el usuario y redirige al login si los datos son válidos.
+
+    Redirige al dashboard si el usuario ya tiene sesión activa.
+    """
+    from django.contrib.auth.forms import UserCreationForm
+
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Cuenta creada correctamente. Inicia sesión para continuar.')
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'registration/registro.html', {'form': form})

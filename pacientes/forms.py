@@ -7,7 +7,6 @@ y edición de pacientes dentro del sistema hospitalario.
 
 from django import forms
 from django.utils import timezone
-from datetime import date
 from .models import Paciente
 
 
@@ -17,7 +16,23 @@ class PacienteForm(forms.ModelForm):
 
     Basado en el modelo Paciente. Incluye estilos Bootstrap, etiquetas
     en español, mensajes de error personalizados y validaciones de negocio.
+
+    La fecha de nacimiento se declara explícitamente como campo del
+    formulario (no solo como widget en Meta) para garantizar que el valor
+    actual se muestre correctamente al editar un registro existente.
     """
+
+    fecha_nacimiento = forms.DateField(
+        label='Fecha de nacimiento',
+        input_formats=['%Y-%m-%d', '%d/%m/%Y', '%d-%m-%Y'],
+        widget=forms.DateInput(
+            format='%Y-%m-%d',
+            attrs={
+                'class': 'form-control',
+                'type': 'date',
+            }
+        )
+    )
 
     class Meta:
         model = Paciente
@@ -37,7 +52,6 @@ class PacienteForm(forms.ModelForm):
             'numero_documento': 'Número de documento',
             'nombres': 'Nombres',
             'apellidos': 'Apellidos',
-            'fecha_nacimiento': 'Fecha de nacimiento',
             'telefono': 'Teléfono',
             'correo': 'Correo electrónico',
             'direccion': 'Dirección',
@@ -59,10 +73,6 @@ class PacienteForm(forms.ModelForm):
             'apellidos': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Ingrese los apellidos',
-            }),
-            'fecha_nacimiento': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date',
             }),
             'telefono': forms.TextInput(attrs={
                 'class': 'form-control',

@@ -17,29 +17,20 @@
                     <i class="bi bi-hospital display-2 text-success"></i>
 
                     <h2 class="fw-bold mt-3">
-
                         Sistema Hospitalario
-
                     </h2>
 
                     <p class="text-muted">
-
                         Inicie sesión para continuar
-
                     </p>
 
                 </div>
 
                 {% if form.errors %}
-
                     <div class="alert alert-danger">
-
                         <i class="bi bi-exclamation-triangle-fill"></i>
-
                         Usuario o contraseña incorrectos.
-
                     </div>
-
                 {% endif %}
 
                 <form method="post">
@@ -47,61 +38,47 @@
                     {% csrf_token %}
 
                     <div class="mb-3">
-
-                        <label class="form-label">
-
-                            Usuario
-
-                        </label>
-
+                        <label class="form-label">Usuario</label>
                         <input
                             type="text"
                             name="username"
                             class="form-control"
                             placeholder="Ingrese su usuario"
                             required>
-
                     </div>
 
                     <div class="mb-4">
-
-                        <label class="form-label">
-
-                            Contraseña
-
-                        </label>
-
+                        <label class="form-label">Contraseña</label>
                         <input
                             type="password"
                             name="password"
                             class="form-control"
                             placeholder="Ingrese su contraseña"
                             required>
-
                     </div>
 
                     <div class="d-grid">
-
                         <button
                             type="submit"
                             class="btn btn-success btn-lg">
-
                             <i class="bi bi-box-arrow-in-right"></i>
-
                             Iniciar Sesión
-
                         </button>
-
                     </div>
 
                 </form>
 
+                <hr>
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        ¿No tienes cuenta?
+                        <a href="{% url 'registro' %}" class="text-success fw-semibold">Regístrate aquí</a>
+                    </small>
+                </div>
+
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 {% endblock %}
