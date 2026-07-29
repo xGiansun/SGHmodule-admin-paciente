@@ -1,157 +1,147 @@
-# SGH - Sistema de Gestion Hospitalaria
-### Modulo de Administracion de Pacientes
+# 🏥 SGH - Sistema de Gestión Hospitalaria
 
-Proyecto desarrollado como parte del programa Tecnologo en Analisis y Desarrollo de Software - SENA.
+### Módulo de Administración de Pacientes
 
----
-
-## Descripcion
-
-Sistema de gestion hospitalaria con modulo completo de administracion de pacientes. Incluye interfaz web con templates Django y una API REST para integracion con frontends externos (React, Vue, etc.).
+Proyecto desarrollado como parte del programa **Tecnólogo en Análisis y Desarrollo de Software** - SENA.
 
 ---
 
-## Stack tecnologico
+## 📋 Descripción
 
-| Categoria | Tecnologia |
-|---|---|
-| Lenguaje | Python |
-| Framework backend | Django 6 |
-| API REST | Django REST Framework |
-| Base de datos | MySQL |
-| Frontend web | HTML5 + Bootstrap 5.3.7 |
-| Versionamiento | Git + GitHub |
-| Entorno local | Laragon + DBeaver |
-| IDE | Visual Studio Code |
+Se desarrolló un Módulo de Administración de Pacientes utilizando Django 6 y MySQL. El módulo permite registrar, consultar, editar y eliminar pacientes mediante operaciones CRUD. Además, incorpora autenticación de usuarios con registro desde el navegador, búsqueda de registros, paginación, validación de formularios y un dashboard principal. Para el desarrollo se utilizaron Visual Studio Code, Git, GitHub, Bootstrap 5, Laragon y DBeaver, siguiendo buenas prácticas como el uso de un entorno virtual, variables de entorno, archivo `.gitignore` y `requirements.txt`.
 
 ---
 
-## Funcionalidades
+## 🛠️ Tecnologías y herramientas utilizadas
 
-### Interfaz web
-- Login y logout con sesiones
-- Dashboard con resumen de pacientes
-- CRUD completo de pacientes
-- Busqueda por nombre completo o documento
-- Sugerencias cuando no hay resultados exactos
-- Paginacion y validacion de formularios
-- Advertencia al registrar correos compartidos temporalmente
-- Validacion de fecha de nacimiento y telefono
+### Herramientas de desarrollo
 
-### API REST
+- Visual Studio Code
+- Windows PowerShell
+- Git / GitHub
 
-| Metodo | Endpoint | Descripcion |
-|---|---|---|
-| POST | `/api/auth/login/` | Obtener token de acceso |
-| POST | `/api/auth/logout/` | Cerrar sesion e invalidar token |
-| GET | `/api/auth/me/` | Datos del usuario autenticado |
-| GET | `/api/pacientes/` | Listar pacientes con busqueda y paginacion |
-| POST | `/api/pacientes/` | Crear paciente |
-| GET | `/api/pacientes/{id}/` | Detalle de un paciente |
-| PUT | `/api/pacientes/{id}/` | Actualizar paciente completo |
-| PATCH | `/api/pacientes/{id}/` | Actualizar campos especificos |
-| DELETE | `/api/pacientes/{id}/` | Eliminar paciente |
+### Lenguajes
 
----
+- Python
+- HTML5
 
-## Instalacion
+### Frameworks y librerías
 
-> Requiere Laragon corriendo con MySQL activo antes de ejecutar.
+- Django 6
+- Bootstrap 5.3.7
+- Bootstrap Icons 1.11.3
 
-```bash
-# 1. Clonar el repositorio
-git clone https://github.com/xGiansun/SGHmodule-admin-paciente.git
-cd SGHmodule-admin-paciente
+### Base de datos
 
-# 2. Crear y activar entorno virtual
-python -m venv .venv
-.venv\Scripts\activate        # Windows
-source .venv/bin/activate     # Linux/Mac
+- MySQL
 
-# 3. Instalar dependencias
-python -m pip install -r requirements.txt
+### Herramientas complementarias
 
-# 4. Configurar variables de entorno
-copy .env.example .env
-# Abre el archivo .env y completa tus credenciales de MySQL y SECRET_KEY
+- Laragon (servidor MySQL local)
+- DBeaver (administración de la base de datos)
 
-# 5. Aplicar migraciones
-python manage.py migrate
+### Gestión del proyecto
 
-# 6. Crear usuario administrador (obligatorio para acceder al sistema)
-python manage.py createsuperuser
-
-# 7. Iniciar servidor
-python manage.py runserver
-```
-
-El sistema estara disponible en http://127.0.0.1:8000 (entorno local de desarrollo)
+- Entorno virtual (`.venv`)
+- Variables de entorno (`.env`)
+- `.gitignore`
+- `requirements.txt`
 
 ---
 
-## Uso de la API
+## ✅ Funcionalidades
 
-```
-# 1. Obtener token
-POST /api/auth/login/
-Body: { "username": "admin", "password": "tu_password" }
-Respuesta: { "token": "abc123...", "username": "admin" }
-
-# 2. Incluir el token en cada peticion como header
-Authorization: Token abc123...
-```
-
----
-
-## Estructura del proyecto
-
-```
-SGHmodule-admin-paciente/
-├── hospital/
-│   ├── __init__.py
-│   ├── asgi.py
-│   ├── auth_views.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-├── pacientes/
-│   ├── migrations/
-│   │   ├── 0001_initial.py
-│   │   ├── 0002_alter_paciente_numero_documento.py
-│   │   ├── 0003_alter_paciente_tipo_documento.py
-│   │   └── __init__.py
-│   ├── templates/
-│   │   └── pacientes/
-│   │       ├── confirmar_eliminar.html
-│   │       ├── dashboard.html
-│   │       ├── formulario.html
-│   │       └── lista.html
-│   ├── admin.py
-│   ├── api_urls.py
-│   ├── api_views.py
-│   ├── apps.py
-│   ├── forms.py
-│   ├── models.py
-│   ├── serializers.py
-│   ├── tests.py
-│   ├── urls.py
-│   ├── utils.py
-│   └── views.py
-├── static/
-│   └── css/
-├── templates/
-│   ├── base.html
-│   └── registration/
-│       └── login.html
-├── .env.example
-├── .gitignore
-├── manage.py
-└── requirements.txt
-```
+- Registro de cuenta de usuario desde el navegador (`/registro/`)
+- Inicio y cierre de sesión
+- Dashboard principal con resumen de pacientes
+- Registro de pacientes
+- Consulta de pacientes
+- Actualización de pacientes (con fecha de nacimiento pre-rellena correctamente)
+- Eliminación de pacientes con confirmación
+- Búsqueda por nombre, apellido y número de documento
+- Paginación
+- Validación de formularios
+- Protección de rutas mediante autenticación
+- Gestión de sesiones
 
 ---
 
-## Autor
+## ⚙️ Instalación y configuración
 
-**Giansun**
+> **Requisito previo:** tener **Laragon** corriendo con el servicio MySQL activo antes de ejecutar cualquier comando.
+
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/xGiansun/SGHmodule-admin-paciente.git
+   cd SGHmodule-admin-paciente
+   ```
+
+2. Crear y activar el entorno virtual:
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\activate
+   ```
+
+3. Instalar dependencias:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Crear el archivo `.env` en la raíz del proyecto con las siguientes variables:
+   ```env
+   SECRET_KEY=tu_clave_secreta
+   DEBUG=True
+   DB_NAME=nombre_base_datos
+   DB_USER=usuario
+   DB_PASSWORD=contraseña
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   ```
+
+5. Aplicar migraciones:
+   ```bash
+   python manage.py migrate
+   ```
+
+6. Iniciar el servidor:
+   ```bash
+   python manage.py runserver
+   ```
+
+---
+
+## 🚀 Primer acceso — Cómo crear tu cuenta
+
+El sistema requiere autenticación para acceder al módulo de pacientes. La cuenta se crea directamente desde el navegador, sin necesidad de comandos adicionales:
+
+1. Con el servidor corriendo, abre tu navegador y ve a:
+   ```
+   http://127.0.0.1:8000/registro/
+   ```
+
+2. Completa el formulario con un nombre de usuario y contraseña.
+
+3. Al registrarte exitosamente, serás redirigido al login automáticamente:
+   ```
+   http://127.0.0.1:8000/login/
+   ```
+
+4. Inicia sesión y accede al sistema.
+
+> ℹ️ Si ya tienes una cuenta creada, ve directamente a `http://127.0.0.1:8000/login/`.
+
+---
+
+## 🐛 Correcciones recientes
+
+| # | Problema | Solución |
+|---|----------|----------|
+| 1 | El sistema requería login pero no había forma de crear un usuario desde el navegador | Se agregó la vista `/registro/` con formulario `UserCreationForm` de Django |
+| 2 | Al editar un paciente, el campo **Fecha de nacimiento** aparecía vacío y debía ingresarse de nuevo | Se declaró `fecha_nacimiento` explícitamente en el formulario con `input_formats` y `format='%Y-%m-%d'` para garantizar que el valor se pre-rellene correctamente |
+
+---
+
+## 👤 Autor
+
+**Giansun**  
 GitHub: [@xGiansun](https://github.com/xGiansun)
