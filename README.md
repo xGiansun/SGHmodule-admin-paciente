@@ -141,7 +141,7 @@ El sistema requiere autenticación para acceder al módulo de pacientes. La cuen
 
 ---
 
-## 👤 Autor
-
-**Giansun**  
+## 👤👤 Autores
+  
 GitHub: [@xGiansun](https://github.com/xGiansun)
+GitHub: [Wilson Corredor](https://github.com/wilsoncorredor1123)
