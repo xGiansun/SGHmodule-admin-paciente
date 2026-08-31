@@ -82,3 +82,165 @@
 </div>
 
 {% endblock %}
+
+{% block extra_scripts %}
+<style>
+.chat-container {
+width: 100%;
+max-width: 400px;
+height: 500px;
+background: #fff;
+border-radius: 12px;
+box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+display: none;
+flex-direction: column;
+overflow: hidden;
+position: fixed;
+bottom: 80px;
+right: 20px;
+}
+.chat-container.abierto {
+display: flex;
+}
+.messages {
+flex: 1;
+padding: 15px;
+overflow-y: auto;
+display: flex;
+flex-direction: column;
+}
+.message {
+margin: 8px 0;
+padding: 10px;
+border-radius: 10px;
+max-width: 80%;
+}
+.user {
+background-color: #d1e7ff;
+align-self: flex-end;
+}
+.bot {
+background-color: #e9ecef;
+align-self: flex-start;
+}
+.input-area {
+display: flex;
+border-top: 1px solid #ccc;
+}
+.input-area input {
+flex: 1;
+padding: 12px;
+border: none;
+outline: none;
+font-size: 14px;
+}
+.input-area button {
+padding: 12px;
+background: #007bff;
+color: white;
+border: none;
+cursor: pointer;
+}
+.input-area button:hover {
+background: #0056b3;
+}
+.bubble-btn {
+position: fixed;
+bottom: 20px;
+right: 20px;
+width: 55px;
+height: 55px;
+border-radius: 50%;
+background: #007bff;
+color: white;
+border: none;
+font-size: 24px;
+cursor: pointer;
+box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+</style>
+
+<div class="chat-container" role="region" aria-label="Chat con el bot educativo">
+<div class="messages" id="messages"></div>
+<div class="input-area">
+<input type="text" id="userInput" aria-label="Escribe tu pregunta"
+placeholder="Escribe tu pregunta..." />
+<button onclick="sendMessage()">Enviar</button>
+</div>
+</div>
+<button class="bubble-btn" onclick="toggleChat()">💬</button>
+
+<script>
+const messages = document.getElementById("messages");
+let chatAbierto = false;
+function toggleChat() {
+const chat = document.querySelector(".chat-container");
+chat.classList.toggle("abierto");
+chatAbierto = !chatAbierto;
+if (chatAbierto && messages.children.length === 0) {
+addMessage(
+"👋 ¡Hola! Soy el asistente del SGH. " +
+"Solo funciono con estas palabras clave:\n\n" +
+"• objetivo\n" +
+"• servicios\n" +
+"• cita\n" +
+"• horario\n" +
+"• historia\n" +
+"• urgencias\n" +
+"• contacto\n" +
+"• requisitos\n" +
+"• farmacia\n" +
+"• salir\n\n" +
+"Escribe una de ellas para comenzar 😊",
+"bot"
+);
+}
+}
+function addMessage(text, sender) {
+const div = document.createElement("div");
+div.classList.add("message", sender);
+div.textContent = text;
+messages.appendChild(div);
+messages.scrollTop = messages.scrollHeight;
+}
+function botResponse(input) {
+const pregunta = input.toLowerCase();
+if (pregunta.includes("objetivo")) {
+return "El objetivo del SGH es gestionar de forma eficiente los procesos hospitalarios como admisiones, historias clinicas, citas y facturacion para mejorar la atencion al paciente.";
+} else if (pregunta.includes("servicios")) {
+return "El SGH ofrece servicios de consulta externa, urgencias, hospitalizacion, laboratorio clinico, imagenes diagnosticas, farmacia y salud mental.";
+} else if (pregunta.includes("cita")) {
+return "Para agendar una cita en el SGH puedes llamar a la linea de atencion, ingresar al portal web o dirigirte al modulo de admisiones con tu documento de identidad y carne de afiliacion.";
+} else if (pregunta.includes("horario")) {
+return "El SGH atiende de lunes a viernes de 7:00 a.m. a 5:00 p.m. y sabados de 7:00 a.m. a 1:00 p.m. El servicio de urgencias esta disponible las 24 horas los 365 dias del anio.";
+} else if (pregunta.includes("historia")) {
+return "Para solicitar tu historia clinica debes presentar tu documento de identidad en la oficina de Archivo Clinico. El plazo de entrega es de maximo 15 dias habiles.";
+} else if (pregunta.includes("urgencias")) {
+return "El servicio de urgencias del SGH funciona las 24 horas. En caso de emergencia dirigete a la entrada principal del hospital o llama al numero de emergencias 123.";
+} else if (pregunta.includes("contacto")) {
+return "Puedes contactar al SGH por telefono al 602-XXX-XXXX, por correo a info@sgh.gov.co o visitando nuestras instalaciones en la Calle 10 # 5-30.";
+} else if (pregunta.includes("requisitos")) {
+return "Para ser atendido en el SGH necesitas presentar tu documento de identidad, carne de afiliacion a EPS y la orden medica en caso de especialistas o examenes.";
+} else if (pregunta.includes("farmacia")) {
+return "La farmacia del SGH esta ubicada en la planta baja modulo 2. Atiende de lunes a viernes de 7:00 a.m. a 5:00 p.m. Debes presentar formula medica y documento de identidad.";
+} else if (pregunta.includes("salir")) {
+return "Gracias por conversar conmigo. ¡Que tenga un excelente dia y buena salud! 👋";
+} else {
+return "Lo siento, aún no tengo respuesta para esa pregunta.";
+}
+}
+function sendMessage() {
+const input = document.getElementById("userInput");
+const text = input.value.trim();
+if (!text) return;
+addMessage(text, "user");
+input.value = "";
+const respuesta = botResponse(text);
+setTimeout(() => addMessage(respuesta, "bot"), 500); // pequeña pausa para simular procesamiento
+}
+// Permite enviar con Enter
+document.getElementById("userInput").addEventListener("keypress", (e) => {
+if (e.key === "Enter") sendMessage();
+});
+</script>
+{% endblock %}
