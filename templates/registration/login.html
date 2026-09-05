@@ -85,162 +85,261 @@
 
 {% block extra_scripts %}
 <style>
-.chat-container {
-width: 100%;
-max-width: 400px;
-height: 500px;
-background: #fff;
-border-radius: 12px;
-box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-display: none;
-flex-direction: column;
-overflow: hidden;
-position: fixed;
-bottom: 80px;
-right: 20px;
-}
-.chat-container.abierto {
-display: flex;
-}
-.messages {
-flex: 1;
-padding: 15px;
-overflow-y: auto;
-display: flex;
-flex-direction: column;
-}
-.message {
-margin: 8px 0;
-padding: 10px;
-border-radius: 10px;
-max-width: 80%;
-}
-.user {
-background-color: #d1e7ff;
-align-self: flex-end;
-}
-.bot {
-background-color: #e9ecef;
-align-self: flex-start;
-}
-.input-area {
-display: flex;
-border-top: 1px solid #ccc;
-}
-.input-area input {
-flex: 1;
-padding: 12px;
-border: none;
-outline: none;
-font-size: 14px;
-}
-.input-area button {
-padding: 12px;
-background: #007bff;
-color: white;
-border: none;
-cursor: pointer;
-}
-.input-area button:hover {
-background: #0056b3;
-}
-.bubble-btn {
-position: fixed;
-bottom: 20px;
-right: 20px;
-width: 55px;
-height: 55px;
-border-radius: 50%;
-background: #007bff;
-color: white;
-border: none;
-font-size: 24px;
-cursor: pointer;
-box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
+    /* === ESTILOS GENERALES === */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+
+    /* === BURBUJA FLOTANTE === */
+    .chat-bubble {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #007bff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: background 0.3s;
+      z-index: 1000;
+    }
+
+    .chat-bubble:hover {
+      background: #0056b3;
+    }
+
+    /* === CONTENEDOR DEL CHATBOT (oculto inicialmente) === */
+    .chat-container {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 100%;
+      max-width: 380px;
+      height: 500px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      overflow: hidden;
+    }
+
+    /* Cuando está activo se muestra con animación */
+    .chat-container.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    /* === CABECERA DEL CHATBOT === */
+    .chat-header {
+      background: #007bff;
+      color: #fff;
+      padding: 12px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      position: relative;
+    }
+
+    /* Botón para cerrar el chat */
+    .close-btn {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    /* === ÁREA DE MENSAJES === */
+    .messages {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      background: #f4f4f4;
+    }
+
+    .message {
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 75%;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .user {
+      background-color: #d1e7ff;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+
+    .bot {
+      background-color: #e9ecef;
+      align-self: flex-start;
+      margin-right: auto;
+    }
+
+    /* === ÁREA DE INPUT === */
+    .input-area {
+      display: flex;
+      border-top: 1px solid #ccc;
+      background: #fff;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .input-area button {
+      padding: 12px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .input-area button:hover {
+      background: #0056b3;
+    }
+
+    /* === ACCESIBILIDAD Y RESPONSIVIDAD === */
+    @media (max-width: 480px) {
+      .chat-container {
+        right: 10px;
+        left: 10px;
+        height: 70vh;
+      }
+    }
 </style>
 
-<div class="chat-container" role="region" aria-label="Chat con el bot educativo">
-<div class="messages" id="messages"></div>
-<div class="input-area">
-<input type="text" id="userInput" aria-label="Escribe tu pregunta"
-placeholder="Escribe tu pregunta..." />
-<button onclick="sendMessage()">Enviar</button>
+<!-- BURBUJA FLOTANTE -->
+<button class="chat-bubble" id="chatToggle" aria-label="Abrir chat con el asistente del SGH">💬</button>
+
+<!-- CONTENEDOR PRINCIPAL DEL CHAT -->
+<div class="chat-container" id="chatContainer" role="dialog" aria-modal="true" aria-labelledby="chatTitle">
+    <!-- CABECERA -->
+    <div class="chat-header">
+        <span id="chatTitle">Asistente SGH</span>
+        <button class="close-btn" id="closeChat" aria-label="Cerrar chat">✖</button>
+    </div>
+
+    <!-- ÁREA DE MENSAJES -->
+    <div class="messages" id="messages" role="log" aria-live="polite"></div>
+
+    <!-- ÁREA DE INPUT -->
+    <div class="input-area">
+        <input type="text" id="userInput" aria-label="Escribe tu mensaje" placeholder="Escribe tu pregunta..." />
+        <button id="sendBtn">Enviar</button>
+    </div>
 </div>
-</div>
-<button class="bubble-btn" onclick="toggleChat()">💬</button>
 
 <script>
-const messages = document.getElementById("messages");
-let chatAbierto = false;
-function toggleChat() {
-const chat = document.querySelector(".chat-container");
-chat.classList.toggle("abierto");
-chatAbierto = !chatAbierto;
-if (chatAbierto && messages.children.length === 0) {
-addMessage(
-"👋 ¡Hola! Soy el asistente del SGH. " +
-"Solo funciono con estas palabras clave:\n\n" +
-"• objetivo\n" +
-"• servicios\n" +
-"• cita\n" +
-"• horario\n" +
-"• historia\n" +
-"• urgencias\n" +
-"• contacto\n" +
-"• requisitos\n" +
-"• farmacia\n" +
-"• salir\n\n" +
-"Escribe una de ellas para comenzar 😊",
-"bot"
-);
-}
-}
-function addMessage(text, sender) {
-const div = document.createElement("div");
-div.classList.add("message", sender);
-div.textContent = text;
-messages.appendChild(div);
-messages.scrollTop = messages.scrollHeight;
-}
-function botResponse(input) {
-const pregunta = input.toLowerCase();
-if (pregunta.includes("objetivo")) {
-return "El objetivo del SGH es gestionar de forma eficiente los procesos hospitalarios como admisiones, historias clinicas, citas y facturacion para mejorar la atencion al paciente.";
-} else if (pregunta.includes("servicios")) {
-return "El SGH ofrece servicios de consulta externa, urgencias, hospitalizacion, laboratorio clinico, imagenes diagnosticas, farmacia y salud mental.";
-} else if (pregunta.includes("cita")) {
-return "Para agendar una cita en el SGH puedes llamar a la linea de atencion, ingresar al portal web o dirigirte al modulo de admisiones con tu documento de identidad y carne de afiliacion.";
-} else if (pregunta.includes("horario")) {
-return "El SGH atiende de lunes a viernes de 7:00 a.m. a 5:00 p.m. y sabados de 7:00 a.m. a 1:00 p.m. El servicio de urgencias esta disponible las 24 horas los 365 dias del anio.";
-} else if (pregunta.includes("historia")) {
-return "Para solicitar tu historia clinica debes presentar tu documento de identidad en la oficina de Archivo Clinico. El plazo de entrega es de maximo 15 dias habiles.";
-} else if (pregunta.includes("urgencias")) {
-return "El servicio de urgencias del SGH funciona las 24 horas. En caso de emergencia dirigete a la entrada principal del hospital o llama al numero de emergencias 123.";
-} else if (pregunta.includes("contacto")) {
-return "Puedes contactar al SGH por telefono al 602-XXX-XXXX, por correo a info@sgh.gov.co o visitando nuestras instalaciones en la Calle 10 # 5-30.";
-} else if (pregunta.includes("requisitos")) {
-return "Para ser atendido en el SGH necesitas presentar tu documento de identidad, carne de afiliacion a EPS y la orden medica en caso de especialistas o examenes.";
-} else if (pregunta.includes("farmacia")) {
-return "La farmacia del SGH esta ubicada en la planta baja modulo 2. Atiende de lunes a viernes de 7:00 a.m. a 5:00 p.m. Debes presentar formula medica y documento de identidad.";
-} else if (pregunta.includes("salir")) {
-return "Gracias por conversar conmigo. ¡Que tenga un excelente dia y buena salud! 👋";
-} else {
-return "Lo siento, aún no tengo respuesta para esa pregunta.";
-}
-}
-function sendMessage() {
-const input = document.getElementById("userInput");
-const text = input.value.trim();
-if (!text) return;
-addMessage(text, "user");
-input.value = "";
-const respuesta = botResponse(text);
-setTimeout(() => addMessage(respuesta, "bot"), 500); // pequeña pausa para simular procesamiento
-}
-// Permite enviar con Enter
-document.getElementById("userInput").addEventListener("keypress", (e) => {
-if (e.key === "Enter") sendMessage();
-});
+    // === REFERENCIAS A ELEMENTOS DEL DOM ===
+    const chatToggle = document.getElementById("chatToggle");
+    const chatContainer = document.getElementById("chatContainer");
+    const closeChat = document.getElementById("closeChat");
+    const messages = document.getElementById("messages");
+    const userInput = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+
+    /* === FUNCIÓN: agregar mensaje al área === */
+    function addMessage(text, sender) {
+      const div = document.createElement("div");
+      div.classList.add("message", sender);
+      div.textContent = text;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    /* === RESPUESTAS DEL BOT - CONTEXTO SGH === */
+    function botResponse(input) {
+      const pregunta = input.toLowerCase();
+      if (pregunta.includes("objetivo")) {
+        return "El objetivo del SGH es gestionar de forma eficiente los procesos hospitalarios como admisiones, historias clínicas, citas y facturación para mejorar la atención al paciente.";
+      } else if (pregunta.includes("servicios")) {
+        return "El SGH ofrece servicios de consulta externa, urgencias, hospitalización, laboratorio clínico, imágenes diagnósticas, farmacia y salud mental.";
+      } else if (pregunta.includes("cita")) {
+        return "Para agendar una cita en el SGH puedes llamar a la línea de atención, ingresar al portal web o dirigirte al módulo de admisiones con tu documento de identidad y carné de afiliación.";
+      } else if (pregunta.includes("horario")) {
+        return "El SGH atiende de lunes a viernes de 7:00 a.m. a 5:00 p.m. y sábados de 7:00 a.m. a 1:00 p.m. El servicio de urgencias está disponible las 24 horas los 365 días del año.";
+      } else if (pregunta.includes("historia")) {
+        return "Para solicitar tu historia clínica debes presentar tu documento de identidad en la oficina de Archivo Clínico. El plazo de entrega es de máximo 15 días hábiles.";
+      } else if (pregunta.includes("urgencias")) {
+        return "El servicio de urgencias del SGH funciona las 24 horas. En caso de emergencia dirígete a la entrada principal del hospital o llama al número de emergencias 123.";
+      } else if (pregunta.includes("contacto")) {
+        return "Puedes contactar al SGH por teléfono al 602-XXX-XXXX, por correo a info@sgh.gov.co o visitando nuestras instalaciones en la Calle 10 # 5-30.";
+      } else if (pregunta.includes("requisitos")) {
+        return "Para ser atendido en el SGH necesitas presentar tu documento de identidad, carné de afiliación a EPS y la orden médica en caso de especialistas o exámenes.";
+      } else if (pregunta.includes("farmacia")) {
+        return "La farmacia del SGH está ubicada en la planta baja módulo 2. Atiende de lunes a viernes de 7:00 a.m. a 5:00 p.m. Debes presentar fórmula médica y documento de identidad.";
+      } else if (pregunta.includes("salir")) {
+        return "Gracias por conversar conmigo. ¡Que tenga un excelente día y buena salud! 👋";
+      } else {
+        return "Lo siento, aún no tengo respuesta para esa pregunta.";
+      }
+    }
+
+    /* === FUNCIÓN: enviar mensaje del usuario === */
+    function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      addMessage(text, "user");
+      userInput.value = "";
+
+      const respuesta = botResponse(text);
+      setTimeout(() => addMessage(respuesta, "bot"), 400);
+    }
+
+    /* === EVENTOS === */
+
+    // Abrir chatbot al hacer clic en la burbuja
+    chatToggle.addEventListener("click", () => {
+      chatContainer.classList.add("active");
+      userInput.focus();
+    });
+
+    // Cerrar chatbot y limpiar historial de mensajes
+    closeChat.addEventListener("click", () => {
+      chatContainer.classList.remove("active");
+    });
+
+    // Botón enviar
+    sendBtn.addEventListener("click", sendMessage);
+
+    // Enviar con tecla Enter
+    userInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    /*************************************************************************
+     * Inicialización: mensaje de bienvenida del SGH
+     *************************************************************************/
+    (function init() {
+      addMessage(
+        "👋 ¡Hola! Soy el asistente del SGH. Puedes preguntarme por: objetivo, servicios, cita, horario, historia, urgencias, contacto, requisitos, farmacia o salir.",
+        "bot"
+      );
+    })();
 </script>
 {% endblock %}
